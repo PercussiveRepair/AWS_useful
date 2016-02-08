@@ -1,7 +1,5 @@
 #!/bin/bash
-# Script to create IAM creds either from user input or cli option
-
-
+# Script to create IAM creds either from user input or cli option using aws credentials file
 
 function usage()
 {
@@ -30,14 +28,14 @@ done
 # have already been read
 shift $((OPTIND-1))
 
-# if no cli options then ask for the profile to use
+# if no cli options then ask for the 
 if [ $OPTIND -eq 1 ]; then
   PROFILES=`cat ~/.aws/credentials | grep "\[" | tr '\n' ' '`
 
   echo "Usernames, space separated"
   read USERS
 
-  echo "AWS profile name from:"
+  echo "AWS profile name from:" 
   echo $PROFILES
   read PROFILE
 
@@ -53,14 +51,15 @@ fi
 
 for i in $USERS
   do echo "Username: $i"
-  CREATE=`aws --profile $PROFILE iam create-user --user-name $i`
+  CREATE=`aws --profile $PROFILE iam create-user --user-name $i` 
   POLICY=`aws --profile $PROFILE iam attach-user-policy --policy-arn arn:aws:iam::aws:policy/$LEVEL --user-name $i`
-  KEYS=`aws --profile $PROFILE iam create-access-key --user-name $i`
+  KEYS=`aws --profile $PROFILE iam create-access-key --user-name $i` 
   PWD=`openssl rand -base64 12`
   PASS=`aws --profile $PROFILE iam create-login-profile --user-name $i --no-password-reset-required --password $PWD`
   ID=`echo $KEYS | cut -d "\"" -f 22`
-  KEY=`echo $KEYS | cut -d "\"" -f 18`
+  KEY=`echo $KEYS | cut -d "\"" -f 18` 
   echo "Password: $PWD"
   echo "AWS_ID: $ID"
   echo "AWS_SECRET: $KEY"
+  echo "URL: https://$PROFILE.signin.aws.amazon.com/console"
   done
