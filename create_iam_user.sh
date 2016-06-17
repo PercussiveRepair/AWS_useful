@@ -1,6 +1,5 @@
 #!/bin/bash
-# Script to create IAM creds either from user input or cli option
-
+# Script to create IAM creds either from user input or cli option and gpg encrypt output
 
 function usage()
 {
