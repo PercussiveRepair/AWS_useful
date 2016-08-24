@@ -9,7 +9,7 @@ import sys
 
 environment = ''
 role = ''
-profile_location = '<where your .aws/credentials lives>'
+profile_location = '/Users/jayharrison/.aws/credentials'
 
 if len(sys.argv) == 4:
   account = str(sys.argv[1])
@@ -50,14 +50,21 @@ groups = client.describe_instances(
 )
 
 iplist = []
+role_tag = ''
+env_tag = ''
 
 for instance in groups['Reservations']: 
   for i in instance['Instances']:
-    for t in i['Tags']:
-      if t['Key'] == 'role' and i['State']['Name'] == 'running':
-        iplist.append([environment, t['Value'], i['InstanceId'], i['PrivateIpAddress'], i['PublicDnsName']])
+    if i['State']['Name'] == 'running':
+      for t in i['Tags']:
+        if t['Key'] == 'Environment' or t['Key'] == 'environment':
+          env_tag = t['Value']
+        if t['Key'] == 'Role' or t['Key'] == 'role':
+          role_tag = t['Value']
+
+      iplist.append([env_tag, role_tag, i['InstanceId'], i['PrivateIpAddress'], i['PublicDnsName']])
 
 iplist.sort()
 
 for row in iplist:
-        print("{: <10} {: <20} {: <12} {: <14} {: <20}".format(*row))
+        print("{: <13} {: <20} {: <12} {: <14} {: <20}".format(*row))
