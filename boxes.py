@@ -9,7 +9,7 @@ import sys
 
 environment = ''
 role = ''
-profile_location = '/Users/jayharrison/.aws/credentials'
+profile_location = '<location of .aws/credentials>'
 
 if len(sys.argv) == 4:
   account = str(sys.argv[1])
@@ -56,12 +56,15 @@ env_tag = ''
 for instance in groups['Reservations']: 
   for i in instance['Instances']:
     if i['State']['Name'] == 'running':
-      for t in i['Tags']:
-        if t['Key'] == 'Environment' or t['Key'] == 'environment':
-          env_tag = t['Value']
-        if t['Key'] == 'Role' or t['Key'] == 'role':
-          role_tag = t['Value']
-
+      try:
+        for t in i['Tags']:
+          if t['Key'] == 'Environment' or t['Key'] == 'environment':
+            env_tag = t['Value']
+          if t['Key'] == 'Role' or t['Key'] == 'role':
+            role_tag = t['Value']
+      except KeyError:
+        env_tag = 'No Tags'
+        role_tag = ''
       iplist.append([env_tag, role_tag, i['InstanceId'], i['PrivateIpAddress'], i['PublicDnsName']])
 
 iplist.sort()
