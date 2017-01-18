@@ -9,7 +9,7 @@ import sys
 
 environment = ''
 role = ''
-profile_location = '<location of .aws/credentials>'
+profile_location = '/Users/jayharrison/.aws/credentials'
 
 if len(sys.argv) == 4:
   account = str(sys.argv[1])
@@ -24,7 +24,7 @@ elif len(sys.argv) == 3:
 elif len(sys.argv) == 2:
   account = str(sys.argv[1])
 else:
-  print "Usage 'boxes account (environment) (role)'"
+  print "Usage 'boxes (account) (environment) (role)'"
   sys.exit(0)
 
 #make sure profile is valid
@@ -40,7 +40,7 @@ client = boto3.client('ec2')
 
 filter_list = []
 if role:
-  filter_list.append({ 'Name': 'tag:role', 'Values': [role]}) 
+  filter_list.append({ 'Name': 'tag:role', 'Values': [role]})
 
 if environment:
   filter_list.append({ 'Name': 'tag:environment', 'Values': [environment]})
@@ -53,7 +53,7 @@ iplist = []
 role_tag = ''
 env_tag = ''
 
-for instance in groups['Reservations']: 
+for instance in groups['Reservations']:
   for i in instance['Instances']:
     if i['State']['Name'] == 'running':
       try:
