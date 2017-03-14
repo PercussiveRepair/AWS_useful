@@ -1,4 +1,4 @@
-#! /usr/bin/python
+#! /usr/local/bin/python
 
 # enumerates boxes in aws accounts by envronment and role
 
@@ -50,24 +50,21 @@ groups = client.describe_instances(
 )
 
 iplist = []
-role_tag = ''
-env_tag = ''
 
 for instance in groups['Reservations']:
   for i in instance['Instances']:
     if i['State']['Name'] == 'running':
-      try:
+      env_tag = 'undefined'
+      role_tag = 'undefined'
+      if 'Tags' in i:
         for t in i['Tags']:
-          if t['Key'] == 'Environment' or t['Key'] == 'environment':
+          if 'env' in t['Key'].lower():
             env_tag = t['Value']
-          if t['Key'] == 'Role' or t['Key'] == 'role':
+          if 'role' in t['Key'].lower():
             role_tag = t['Value']
-      except KeyError:
-        env_tag = 'No Tags'
-        role_tag = ''
       iplist.append([env_tag, role_tag, i['InstanceId'], i['PrivateIpAddress'], i['PublicDnsName']])
 
 iplist.sort()
 
 for row in iplist:
-        print("{: <13} {: <20} {: <12} {: <14} {: <20}".format(*row))
+        print("{: <13} {: <20} {: <21} {: <16} {: <20}".format(*row))
